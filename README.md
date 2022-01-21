@@ -1,7 +1,7 @@
 # do-with-all-files
 C-function 
 
-> int do_with_all_files(void (\*do_with_file)(char \*file_path, void \*arg), void \*arg, char \*\*directories, int directories_size, int num_threads)
+> int do_with_all_files(void (\*do_with_file)(char \*file_path, void \*arg), void \*arg, char \*\*files, int files_size, int num_threads)
 > 
 for traversing files/directories in parallell and calling a given function with each encountered file and a void-pointer as parameters. 
 
@@ -11,6 +11,10 @@ for traversing files/directories in parallell and calling a given function with 
   > gcc -o out yourpgrogram.c -pthread -directory_traverser.c queue.c list.c get_opts_help.c
 
 ### Explanation of parameters
+* ```void (*do_with_file)(char *file_path, void *arg)```: a function pointer that will be called with each traversed file and given argument as parameters
+* ```void *arg, char **files```: list of files that will be traversed, files that are directories and sub-directories are traversed in parallell
+* ```int file_size```: number of files (previous argument)
+* ```int num_threads```: number of threads that will be used to traverse files
 
 
 ### What the function does
