@@ -15,6 +15,6 @@ typedef struct Traverser Traverser;
 typedef struct Func_and_arg Func_and_arg;
 typedef struct Options Options;
 
-int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *arg, char **directories, int directories_size, int num_threads);
+int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *arg, char **files, int directories_size, int num_threads);
 
 #endif
