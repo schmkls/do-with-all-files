@@ -36,3 +36,5 @@ The traversing is thread safe, but several threads can be calling given function
   > make
 3. Run (on Linux)
   > ./dswaf [file] [number of threads]
+
+### Please report issues in Issuses, and give feedback in Discussions->General
