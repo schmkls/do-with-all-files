@@ -1,4 +1,4 @@
-# do-with-all-files
+# do-with-files
 C-function 
 
 > int do_with_all_files(void (\*do_with_file)(char \*file_path, void \*arg), void \*arg, char \*\*files, int files_size, int num_threads)
@@ -7,7 +7,8 @@ for traversing files/directories in parallell and calling a given function with 
 
 ### How to use the function
 1. Get all the files in the Github-repository. *Makefile* and *usage_example.c* are not needed (they are only used for showing example usage). 
-2. Use the function in your program and compile like:
+2. Include *directory_traverser.h*
+3. Use the function in your program and compile like:
   > gcc -o out yourpgrogram.c -pthread -directory_traverser.c queue.c list.c get_opts_help.c
 
 ### Explanation of parameters
@@ -16,7 +17,7 @@ for traversing files/directories in parallell and calling a given function with 
 * ```int file_size```: number of files (previous argument)
 * ```int num_threads```: number of threads that will be used to traverse files
 
-
 ### What the function does
+
 
 ### Try the example
