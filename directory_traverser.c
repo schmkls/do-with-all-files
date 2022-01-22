@@ -162,8 +162,8 @@ static Queue *do_to_file_and_get_subfiles(Func_and_arg *func_and_arg, char *file
  * thread-safely between threads, and lets thread quit when
  * all threads has seen that there is no more work.
  * 
- * See the image 'worker_loop' on git for info:
- * (todo link)
+ * See the image 'worker_loop' on git to understand abstraction:
+ * (https://github.com/schmkls/do-with-all-files/blob/main/worker_loop.jpeg)
  * 
  * @param trav traverser-struct 
  * @return int 0 on success, anything else indicates an error

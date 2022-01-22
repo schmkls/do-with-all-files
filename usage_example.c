@@ -76,12 +76,12 @@ void count_up_file_size(char *file_path, void *arg) {
  */
 static void arg_check(int argc, char **argv) {
     if (argc != 3) {
-        fprintf(stderr, "usage_example: How to use the example: ./dswaf [file name] [number of threads to use]\n");
+        fprintf(stderr, "usage_example: How to use the example: ./dwaf [file name] [number of threads to use]\n");
         exit(EXIT_FAILURE);
     }
 
     if (!is_number_above(argv[2], 0)) {
-        fprintf(stderr, "usage_example: How to use the example: ./dswaf [file name] [number of threads to use]\n");
+        fprintf(stderr, "usage_example: How to use the example: ./dwaf [file name] [number of threads to use]\n");
         fprintf(stderr, "(third argument should be positive integer)\n");
         exit(EXIT_FAILURE);
     }
