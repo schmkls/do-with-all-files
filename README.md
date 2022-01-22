@@ -10,10 +10,10 @@ for traversing files/directories in parallell and calling a given function with 
 2. Include *directory_traverser.h* in your program
 3. Use the function in your program
 4. Compile like:
-  > gcc -o out yourpgrogram.c -pthread -directory_traverser.c queue.c list.c get_opts_help.c
+  > gcc -o out yourpgrogram.c -pthread directory_traverser.c queue.c list.c get_opts_help.c
 
 ### Explanation of parameters
-* ```void (*do_with_file)(char *file_path, void *arg)```: a function pointer that will be called with each traversed file im *files* and given argument *arg* as parameters
+* ```void (*do_with_file)(char *file_path, void *arg)```: pointer to function that will be called with each traversed file in *files* and given argument *arg* as parameters
 * ```void *arg```: void-pointer to argument that will be used as *arg*-input to the given *do_with_file*-function
 * ```char **files```: list of files that will be traversed, files that are directories and sub-directories are traversed in parallell
 * ```int file_size```: number of *files* (previous argument)
