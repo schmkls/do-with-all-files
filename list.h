@@ -9,7 +9,6 @@
  * This module is used to perform operations to create, modify,
  * and delete doubly linked lists.
  *
- * @{
  */
 
 

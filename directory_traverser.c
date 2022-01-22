@@ -1,5 +1,5 @@
 /**
- * (git link)
+ * https://github.com/schmkls/do-with-all-files
  * 
  * Module used for traversing files in parallell with a given number of threads, 
  * and calling a given function with given argument with each encountered file's
@@ -21,8 +21,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define FAILURE 1
-#define SUCCESS 0
 
 //used to help store function and argument
 struct Func_and_arg {
@@ -44,11 +42,13 @@ struct Traverser {
     sem_t work_to_do;
 };
 
-
+//used to hold all info needed for threads to be sent to work
 struct Options {
-    Traverser **traversers;                 //will be equal to dir_size
-    int dir_size;                           
+    Traverser **traversers;                 //will be equal to files_size
+    int files_size;                           
     int nr_threads_to_use;
+
+    int success_status;
 };
 
 
@@ -76,6 +76,7 @@ static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_an
     struct dirent *dir_pointer;
     char *temp_file = NULL;
     struct stat temp_file_stats;
+    int ret_status = SUCCESS;
 
     if ((dir = opendir(dir_path)) == NULL) {
         fprintf(stderr, "dswaf: cannot read files in directory '%s'\n", dir_path); 
@@ -91,7 +92,7 @@ static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_an
                 fprintf(stderr, "dswaf: can not traverse '%s'\n", temp_file);
                 closedir(dir);
                 free(temp_file);
-                return FAILURE;
+                ret_status = FAILURE;
             }
             
             if (S_ISDIR(temp_file_stats.st_mode)) { 
@@ -105,7 +106,7 @@ static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_an
     closedir(dir);
     free(temp_file);
 
-    return SUCCESS;   
+    return ret_status;   
 }
 
 
@@ -128,7 +129,7 @@ static Queue *do_to_file_and_get_subfiles(Func_and_arg *func_and_arg, char *file
 
     if (S_ISDIR(temp_file_stats.st_mode)) {
         if (enqueue_sub_dirs_do_with_sub_files(file_path, sub_dirs, func_and_arg) != 0) {
-            //do nothing
+            return NULL;
         }
     }
 
@@ -204,9 +205,10 @@ static int traverse_dir(Traverser *trav) {
 static void *traverse_directories(void *arg) {
     Options *opts = (Options*)arg;
 
-    for (int i = 0; i < opts->dir_size; i++) {
+    for (int i = 0; i < opts->files_size; i++) {
         if (traverse_dir(opts->traversers[i]) != 0) {
             fprintf(stderr, "dswaf: error traversing files\n");
+            opts->success_status = FAILURE;
         }
     }
 
@@ -214,22 +216,22 @@ static void *traverse_directories(void *arg) {
 }
 
 
-static int send_threads_to_do_with_files(Options *opts) {
+static void send_threads_to_do_with_files(Options *opts) {
     pthread_t threads[opts->nr_threads_to_use];
 
     for (int i = 0; i < opts->nr_threads_to_use; i++) {
         if ((pthread_create(&threads[i], NULL, traverse_directories, (void*)opts)) != 0) {
             perror("pthread create");
+            opts->success_status = FAILURE;
         }
     }
 
     for (int i = 0; i < opts->nr_threads_to_use; i++) {
         if (pthread_join(threads[i], NULL) != 0) {
             perror("pthread_join");
+            opts->success_status = FAILURE;
         }
     }
-
-    return SUCCESS;
 }
 
 
@@ -268,6 +270,7 @@ static void destroy_Traverser(Traverser *trav) {
     free(trav);
 }
 
+
 static Func_and_arg *create_Func_and_arg(void (*do_with_file)(char *file_path, void *arg), void *arg) {
     Func_and_arg *func_and_arg = calloc(1, sizeof(Func_and_arg));
     func_and_arg->do_with_file = do_with_file;
@@ -279,7 +282,7 @@ static Func_and_arg *create_Func_and_arg(void (*do_with_file)(char *file_path, v
 static void destroy_Options(Options *opts) {
     if (opts != NULL) {
         free(opts->traversers[0]->do_with_file);    //all traversers share the same do_with_file so it only has to be freed once
-        for (int i = 0; i < opts->dir_size; i++) { 
+        for (int i = 0; i < opts->files_size; i++) { 
             destroy_Traverser(opts->traversers[i]);
         }
         free(opts->traversers);
@@ -288,7 +291,7 @@ static void destroy_Options(Options *opts) {
 }
 
 //returns NULL if options could not be created
-static Options *create_Options(int dir_size, char **dirs, void (*do_with_file)(char *file_path, void *arg), void *arg, int nr_threads_to_use) {
+static Options *create_Options(int files_size, char **files, void (*do_with_file)(char *file_path, void *arg), void *arg, int nr_threads_to_use) {
     Options *user_opts;
     Func_and_arg *func_and_arg;
 
@@ -300,27 +303,35 @@ static Options *create_Options(int dir_size, char **dirs, void (*do_with_file)(c
         destroy_Func_and_arg(func_and_arg);
         return NULL;
     }
-    
-    user_opts->nr_threads_to_use = nr_threads_to_use;       //one thread by default
-    user_opts->dir_size = dir_size;                
 
-    if ((user_opts->traversers = calloc(user_opts->dir_size, sizeof(Traverser*))) == NULL) {
+    user_opts->nr_threads_to_use = nr_threads_to_use;       //one thread by default
+    user_opts->files_size = files_size;   
+    user_opts->success_status = SUCCESS; 
+    
+    if ((user_opts->traversers = calloc(files_size, sizeof(Traverser*))) == NULL) {
         return NULL;
     }
 
-    for (int i = 0; i < user_opts->dir_size; i++){     
-        if ((user_opts->traversers[i] = create_Traverser(dirs[i], user_opts->nr_threads_to_use, func_and_arg)) == NULL) {
+    for (int i = 0; i < user_opts->files_size; i++){     
+        if ((user_opts->traversers[i] = create_Traverser(files[i], nr_threads_to_use, func_and_arg)) == NULL) {
             destroy_Options(user_opts);
             return NULL;
         } 
     }
 
+   
+
     return user_opts;
 }
 
 
+
+//------------------------------the function/interface--------------------------------//
+
 int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *arg, char **files, 
                         int files_size, int num_threads) {
+    
+    int success_status = SUCCESS;
 
     Options *user_opts;                       //stores user options and info for threads work/coordination
     if ((user_opts = create_Options(files_size, files, do_with_file, arg, num_threads)) == NULL) {
@@ -328,9 +339,10 @@ int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *ar
         return FAILURE;
     }
 
-    send_threads_to_do_with_files(user_opts);   //the traversing and doing
+    send_threads_to_do_with_files(user_opts);   //the traversing and doing, sets user_opt's success-status
+    success_status = user_opts->success_status;
     destroy_Options(user_opts);                 //freeing allocated memory
-    return SUCCESS;
+    return success_status;
 }
 
 

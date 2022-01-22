@@ -1,7 +1,7 @@
-all: dswaf
+all: dwaf
 
-dswaf: usage_example.o directory_traverser.o queue.o list.o get_opts_help.o 
-	gcc -lm -pthread -g -std=gnu11 -Wall -o dswaf usage_example.o directory_traverser.o queue.o list.o get_opts_help.o 
+dwaf: usage_example.o directory_traverser.o queue.o list.o get_opts_help.o 
+	gcc -lm -pthread -g -std=gnu11 -Wall -o dwaf usage_example.o directory_traverser.o queue.o list.o get_opts_help.o 
 
 usage_example.o: usage_example.c directory_traverser.h queue.h
 	gcc -g -std=gnu11 -Wall -c usage_example.c

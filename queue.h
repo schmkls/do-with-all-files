@@ -9,7 +9,6 @@
  * This module is used to perform operations to create, modify,
  * and delete a queue.
  *
- * @{
  */
 #define BUFSIZE 256
 

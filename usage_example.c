@@ -173,6 +173,7 @@ int main(int argc, char **argv) {
 
     if (fu->success_status != SUCCESS) {
         printf("usage_example: usage of '%s' could not be estimated succesfully\n", fu->file);
+        exit_status = EXIT_FAILURE;
     }
 
     print_file_usage(fu);
