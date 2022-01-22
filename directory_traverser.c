@@ -291,7 +291,7 @@ static Traverser *create_Traverser(char *top_dir_path, int thread_size, Func_and
     trav->thread_size = thread_size;
     trav->finished = false;
     if (pthread_mutex_init(&trav->modify_lock, NULL) != 0) {
-        perror("pthread_mutex_init error creating du_count");
+        return NULL;
     }
     sem_init(&trav->work_to_do, 0, 1);
     
@@ -315,7 +315,10 @@ static void destroy_Traverser(Traverser *trav) {
 
 
 static Func_and_arg *create_Func_and_arg(void (*do_with_file)(char *file_path, void *arg), void *arg) {
-    Func_and_arg *func_and_arg = calloc(1, sizeof(Func_and_arg));
+    Func_and_arg *func_and_arg;
+    if ((func_and_arg = calloc(1, sizeof(Func_and_arg))) == NULL) {
+        return NULL;
+    }
     func_and_arg->do_with_file = do_with_file;
     func_and_arg->arg = arg;
     return func_and_arg;
@@ -361,8 +364,6 @@ static Options *create_Options(int files_size, char **files, void (*do_with_file
             return NULL;
         } 
     }
-
-   
 
     return user_opts;
 }
