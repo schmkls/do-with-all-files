@@ -34,6 +34,6 @@ The traversing is thread safe, but several threads can be calling given function
 2. Run ([gcc](https://gcc.gnu.org/) requiered) \
   ``` make ```
 3. Run \
-  ``` ./dswaf [file] [number of threads] ```
+  ``` ./dwaf [file] [number of threads] ```
 
 ### Please report issues in Issuses, and give feedback in Discussions->General
