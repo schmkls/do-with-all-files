@@ -1,5 +1,5 @@
 # do-with-all-files
-C-function intended for Linux-environment
+C-function
 
 > int do_with_all_files(void (\*do_with_file)(char \*file_path, void \*arg), void \*arg, char \*\*files, int files_size, int num_threads)
 > 
@@ -28,13 +28,13 @@ for traversing files/directories in parallell and calling a given function with 
 ### Thread safety
 The traversing is thread safe, but several threads can be calling given function *do_with_file* at the same time. Therefore, for thread safe usage of *do_with_all_files*, threads must be synchronized in given function *do_with_file* to avoid data-races when accessing the given *arg*. In the example *usage_example.c* the function *count_up_file_size* is coordinated to be thread safe with the help of mutex-locks. 
 
-### Try the example
+### Try the example (on Linux)
 *usage_example.c* provides an example of how to use *do_with_all_files*. Info about the program is documented as comments in the program. Use it like: 
 
 1. Get all the files in the Github-repository.
 2. Run
   > make
-3. Run (on Linux)
+3. Run
   > ./dswaf [file] [number of threads]
 
 ### Please report issues in Issuses, and give feedback in Discussions->General
