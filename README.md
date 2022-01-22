@@ -30,9 +30,8 @@ The traversing is thread safe, but several threads can be calling given function
 
 ### Try the example (on Linux)
 *usage_example.c* provides an example of how to use *do_with_all_files*. Info about the program is documented as comments in the program. Use it like: 
-
 1. Get all the files in the Github-repository.
-2. Run
+2. Run ([gcc](https://gcc.gnu.org/) requiered)
   > make
 3. Run
   > ./dswaf [file] [number of threads]
