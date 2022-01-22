@@ -19,4 +19,4 @@ get_opts_help.o: get_opts_help.c get_opts_help.h
 	gcc -g -std=gnu11 -Wall -c get_opts_help.c
 
 clean:
-	rm  *.o dswaf
+	rm  *.o dwaf

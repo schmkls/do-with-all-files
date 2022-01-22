@@ -70,7 +70,18 @@ static char *append_path(char *destination, char *path, char *sub_path) {
     return destination;
 }
 
-
+/**
+ * Enqueues sub-directories of given directory to given queue
+ * 
+ * Calls the function stored in given function-and-argument-struct on 
+ * each non-directory sub-file with sub-file and argument
+ * stored in the struct as input.
+ * 
+ * @param dir_path path to directory
+ * @param fq file-queue to be filled with sub-directories
+ * @param func_and_arg stores users function and argument
+ * @return int 0 on success, anything else indicates error
+ */
 static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_and_arg *func_and_arg) {
     DIR *dir;
     struct dirent *dir_pointer;
@@ -79,7 +90,7 @@ static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_an
     int ret_status = SUCCESS;
 
     if ((dir = opendir(dir_path)) == NULL) {
-        fprintf(stderr, "dswaf: cannot read files in directory '%s'\n", dir_path); 
+        fprintf(stderr, "do-with-all-files: cannot read files in directory '%s'\n", dir_path); 
         closedir(dir);
         return FAILURE;
     }
@@ -89,7 +100,7 @@ static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_an
             temp_file = append_path(temp_file, dir_path, dir_pointer->d_name);
 
             if ((lstat(temp_file, &temp_file_stats)) < 0) {
-                fprintf(stderr, "dswaf: can not traverse '%s'\n", temp_file);
+                fprintf(stderr, "do-with-all-files: can not traverse '%s'\n", temp_file);
                 closedir(dir);
                 free(temp_file);
                 ret_status = FAILURE;
@@ -110,17 +121,26 @@ static int enqueue_sub_dirs_do_with_sub_files(char *dir_path, Queue *fq, Func_an
 }
 
 
+/**
+ * Calls the function stored in func_and_arg with file_path and argument stored
+ * in func_and_arg as input. If file is a directory, returns queue with sub_directories
+ * and does the function to all non-directory sub-files.  
+ * 
+ * @param func_and_arg function-and-argument struct storing users function and argument
+ * @param file_path 
+ * @return Queue* containing sub-directories of given file
+ */
 static Queue *do_to_file_and_get_subfiles(Func_and_arg *func_and_arg, char *file_path) {
     struct stat temp_file_stats;
 
     Queue *sub_dirs;
     if ((sub_dirs = queue_create()) == NULL) {
-        fprintf(stderr, "dswaf: can not traverse '%s'\n", file_path);
+        fprintf(stderr, "do-with-all-files: can not traverse '%s'\n", file_path);
         return NULL;
     }
 
     if ((lstat(file_path, &temp_file_stats)) < 0) {
-        fprintf(stderr, "dswaf: can not traverse '%s'\n", file_path);
+        fprintf(stderr, "do-with-all-files: can not traverse '%s'\n", file_path);
         queue_destroy(sub_dirs);
         return NULL;
     }
@@ -137,7 +157,18 @@ static Queue *do_to_file_and_get_subfiles(Func_and_arg *func_and_arg, char *file
 }
 
 
-static int traverse_dir(Traverser *trav) {
+/**
+ * Work-loop for one thread. The loop synchronizes traversal
+ * thread-safely between threads, and lets thread quit when
+ * all threads has seen that there is no more work.
+ * 
+ * See the image 'worker_loop' on git for info:
+ * (todo link)
+ * 
+ * @param trav traverser-struct 
+ * @return int 0 on success, anything else indicates an error
+ */
+static int traverse_file(Traverser *trav) {
     char *temp_file;
     Queue *tmp_file_queue = queue_create();
     
@@ -201,13 +232,19 @@ static int traverse_dir(Traverser *trav) {
     return SUCCESS;
 }
 
-
+/**
+ * Traverses the files stored in given options-struct
+ * Sets opts's success-status to indicate error or success. 
+ * 
+ * @param arg options-struct
+ * @return NULL
+ */
 static void *traverse_directories(void *arg) {
     Options *opts = (Options*)arg;
 
     for (int i = 0; i < opts->files_size; i++) {
-        if (traverse_dir(opts->traversers[i]) != 0) {
-            fprintf(stderr, "dswaf: error traversing files\n");
+        if (traverse_file(opts->traversers[i]) != 0) {
+            fprintf(stderr, "do-with-all-files: error traversing files\n");
             opts->success_status = FAILURE;
         }
     }
@@ -216,6 +253,12 @@ static void *traverse_directories(void *arg) {
 }
 
 
+/**
+ * Sends threads to traverse files with the help of info stored in opts. 
+ * Sets opts's success-status to indicate error or success. 
+ * 
+ * @param opts where options for traversal are stored (what files to traverse, number of threads to use, etc.)
+ */
 static void send_threads_to_do_with_files(Options *opts) {
     pthread_t threads[opts->nr_threads_to_use];
 
@@ -335,7 +378,7 @@ int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *ar
 
     Options *user_opts;                       //stores user options and info for threads work/coordination
     if ((user_opts = create_Options(files_size, files, do_with_file, arg, num_threads)) == NULL) {
-        fprintf(stderr, "dswaf: can not run\n");
+        fprintf(stderr, "do-with-all-files: can not run\n");
         return FAILURE;
     }
 

@@ -7,7 +7,7 @@
  * 
  * How to use (this example) on Linux:
  * 1. Make program ready for use by running 'make' in same catalog where source code (https://github.com/schmkls/do-with-all-files) is located
- * 2. Run ./dswaf [file name] [number of threads to use]"
+ * 2. Run ./dwaf [file name] [number of threads to use]"
  * 
  * Explanation of arguments:
  * [file name] file whos space usage will be estimated, if directory-file 
