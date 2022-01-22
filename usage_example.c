@@ -1,16 +1,16 @@
 /**
- * GIT-link
+ * https://github.com/schmkls/do-with-all-files
+ *
  * Example to show how do-something-with-all-files can be used. 
  * 
- * The example emulates the command "du -ls -B512", that
- * estimates file space usage of given files. 
+ * This example gets the space usage of a given file using a given number of threads. 
  * 
  * How to use (this example) on Linux:
- * 1. Make program ready for use by running 'make' in same catalog where source code (from GIT-link) is located
+ * 1. Make program ready for use by running 'make' in same catalog where source code (https://github.com/schmkls/do-with-all-files) is located
  * 2. Run ./dswaf [file name] [number of threads to use]"
  * 
  * Explanation of arguments:
- * [file name] files whos space usage will be estimated, for directory-files 
+ * [file name] file whos space usage will be estimated, if directory-file 
  *                all files in directory and subdirectories will be included
  * 
  * [-j number of threads to use] number of threads that will be used to traverse given file in paralell
