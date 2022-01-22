@@ -320,10 +320,10 @@ static Options *create_Options(int dir_size, char **dirs, void (*do_with_file)(c
 
 
 int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *arg, char **files, 
-                        int directories_size, int num_threads) {
+                        int files_size, int num_threads) {
 
     Options *user_opts;                       //stores user options and info for threads work/coordination
-    if ((user_opts = create_Options(directories_size, directories, do_with_file, arg, num_threads)) == NULL) {
+    if ((user_opts = create_Options(files_size, files, do_with_file, arg, num_threads)) == NULL) {
         fprintf(stderr, "dswaf: can not run\n");
         return FAILURE;
     }
