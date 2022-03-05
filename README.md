@@ -23,7 +23,7 @@ for traversing files/directories in parallell and calling a given function with 
 0 on success. Anything else indicates an error. Error messages are printed to *stderr*.  
 
 ### What *do_with_all_files* does
-*do_with_all_files* traverses the given *files*, and calls the given function *do_with_file* with each encountered file and the given argument *arg* as input. If encountered files are directories, their sub-files will be traversed in parallell using *num_threads* threads. If *num_threads* = 1, files are traversed recursively.
+*do_with_all_files* traverses the given *files*, and calls the given function *do_with_file* with each encountered file and the given argument *arg* as input. If encountered files are directories, their sub-files will be traversed in parallell using *num_threads* threads. 
 
 ### Thread safety
 The traversing is thread safe, but several threads can be calling given function *do_with_file* at the same time. Therefore, for thread safe usage of *do_with_all_files*, threads must be synchronized in given function *do_with_file* to avoid data-races when accessing the given *arg*. In the example *usage_example.c* the function *count_up_file_size* is coordinated to be thread safe with the help of mutex-locks. 
@@ -31,9 +31,9 @@ The traversing is thread safe, but several threads can be calling given function
 ### Try the example (on Linux)
 *usage_example.c* provides an example of how to use *do_with_all_files*. Info about the program is documented as comments in the program. Use it like: 
 1. Get all the files in the Github-repository.
-2. Run ([gcc](https://gcc.gnu.org/) requiered) \
+2. Run ([gcc](https://gcc.gnu.org/) requiered): \
   ``` make ```
-3. Run \
+3. Run: \
   ``` ./dwaf [file] [number of threads] ```
 
 ### Please report issues in Issuses, and give feedback in Discussions->General
