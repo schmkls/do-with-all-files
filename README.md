@@ -3,7 +3,7 @@ C-function
 
 __```int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *arg, char **files, int files_size, int num_threads)```__
 >
-for traversing files/directories in parallell and calling a given function with each encountered file and a void-pointer as parameters. 
+for traversing files/directories in parallell and calling a given function with each encountered file and a void-pointer as parameters. Inspired by the Linux *du* command. 
 
 ### How to use *do_with_all_files*
 1. Get all the files in the Github-repository. *Makefile* and *usage_example.c* are not needed (they are only used for showing example usage). 
