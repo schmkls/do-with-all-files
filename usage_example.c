@@ -1,7 +1,7 @@
 /**
  * https://github.com/schmkls/do-with-all-files
  *
- * Example to show how do-something-with-all-files can be used. 
+ * Example to show how do-with-all-files can be used. 
  * 
  * This example gets the space usage of a given file using a given number of threads. 
  * 
