@@ -36,4 +36,4 @@ The traversing is thread safe, but several threads can be calling given function
 3. Run: \
   ``` ./dwaf [file] [number of threads] ```
 
-### Please report issues in Issuses, and give feedback in Discussions->General
+### Please give feedback in Discussions->General
