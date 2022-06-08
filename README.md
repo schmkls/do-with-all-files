@@ -3,7 +3,7 @@ C-function
 
 __```int do_with_all_files(void (*do_with_file)(char *file_path, void *arg), void *arg, char **files, int files_size, int num_threads)```__
 >
-for calling a function *do_with_file* with each file *files* as input, recursively for directories. Inspired by the Linux *du* command. 
+for calling a function *do_with_file* with each file in *files* as input, recursively for directories. Inspired by the Linux *du* command. 
 
 ### How to use *do_with_all_files*
 1. Get all the files in the Github-repository. *Makefile* and *usage_example.c* are not needed (they are only used for showing example usage). 
