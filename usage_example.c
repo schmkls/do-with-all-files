@@ -6,14 +6,14 @@
  * This example gets the space usage of a given file using a given number of threads. 
  * 
  * How to use (this example) on Linux:
- * 1. Make program ready for use by running 'make' in same catalog where source code (https://github.com/schmkls/do-with-all-files) is located
- * 2. Run ./dwaf [file name] [number of threads to use]"
+ * 1. Make program ready for use by running 'make'
+ * 2. Run ./dwaf [file name] [number of threads to use]
  * 
  * Explanation of arguments:
- * [file name] file whos space usage will be estimated, if directory-file 
- *                all files in directory and subdirectories will be included
+ * [file name] file whos space usage is estimated, if directory-file 
+ *                all files in directory and subdirectories are included
  * 
- * [-j number of threads to use] number of threads that will be used to traverse given file in paralell
+ * [-j number of threads to use] number of threads that will be used to traverse given file
  */
 
 #include "directory_traverser.h"
@@ -33,8 +33,8 @@
 /**
  * Struct that will be used as argument to 'do_with_all_files'  
  * 
- * Holds usage of one one file and has objects used to 
- * coordinate threads to count up the usage
+ * Holds usage of one file and has objects used to 
+ * coordinate threads
  */
 typedef struct file_usage {
     int success_status;
